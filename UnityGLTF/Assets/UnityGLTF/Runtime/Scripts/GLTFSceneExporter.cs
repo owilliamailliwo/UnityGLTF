@@ -49,8 +49,8 @@ namespace UnityGLTF
 			public Texture2D texture;
 			public TextureMapType textureMapType;
 		}
-			
-		private class PropertyCurveBindings
+
+		public class PropertyCurveBindings
 		{
 			public string name;
 			public List<EditorCurveBinding> curveBindings;
@@ -65,7 +65,7 @@ namespace UnityGLTF
 			}
 		}
 		
-		private class CurveBindingGroup
+		public class CurveBindingGroup
 		{
 			public string path;
 			public Type type;
@@ -936,7 +936,10 @@ namespace UnityGLTF
 			}
 			
 			var timesstampsId = ExportAccessor(timestamps);
-			
+
+			var animationCorrector = new AnimationCorrector();
+			animationCorrector.Init(curveBindingGroups, rootNodeTransform);
+
 			foreach (var curveBindingGroup in curveBindingGroups)
 			{
 				var bone = rootNodeTransform.Find(curveBindingGroup.path);
@@ -951,14 +954,29 @@ namespace UnityGLTF
 					continue;
 				}
 
-				foreach(var property in curveBindingGroup.properties)
+				foreach (var property in curveBindingGroup.properties)
 				{
 					GLTFAnimationChannelPath path;
-					AccessorId accessorId = ExportCurve(animationClip, property.name, property.curveBindings, frameCount, out path);
+					var data = animationCorrector.Corrector(animationClip, property.name, property.curveBindings, frameCount, curveBindingGroup.path, out path);
+					AccessorId accessorId = null;
+					if (data != null)
+					{
+						if (path == GLTFAnimationChannelPath.translation)
+						{
+							accessorId = ExportAccessor(SchemaExtensions.ConvertVector3CoordinateSpaceAndCopy(data, SchemaExtensions.CoordinateSpaceConversionScale));
+						}
+					}
+
+					if (accessorId == null)
+					{
+						accessorId = ExportCurve(animationClip, property.name, property.curveBindings, frameCount, out path);
+					}
+
 					if (accessorId == null)
 					{
 						continue;
 					}
+
 					var sampler = new AnimationSampler()
 					{
 						Input = timesstampsId,
