@@ -8,12 +8,15 @@ using GLTF.Schema;
 
 public class AnimationCorrector
 {
-	public static string _dealtWithBoneName = "root";
-	private string _dealtWithCurveBindingsPath;
+	public static string DealtWithBoneName = "root";
+	private string DealtWithCurveBindingsPath;
 
-	public static string _footName = "foot";
-	private static string _leftFootName = _footName + "_L";
-	private static string _rightFootName = _footName + "_R";
+	public static bool DisableYMovement = false;
+	public static bool DisableXZMovement = true;
+
+	public static string FootName = "foot";
+	private static string LeftFootName = FootName + "_L";
+	private static string RightFootName = FootName + "_R";
 
 	private string _leftFootCurveBindingsPath;
 	private List<EditorCurveBinding> _leftFootCurveBindings;
@@ -40,7 +43,7 @@ public class AnimationCorrector
 
 			var bone = rootNodeTransform.Find(curveBindingGroup.path);
 
-			if (bone.name == _leftFootName)
+			if (bone.name == LeftFootName)
 			{
 				foreach (var property in curveBindingGroup.properties)
 				{
@@ -54,7 +57,7 @@ public class AnimationCorrector
 				leftFootBone = bone;
 			}
 
-			if (bone.name == _rightFootName)
+			if (bone.name == RightFootName)
 			{
 				foreach (var property in curveBindingGroup.properties)
 				{
@@ -68,9 +71,9 @@ public class AnimationCorrector
 				rightFootBone = bone;
 			}
 
-			if (bone.name == _dealtWithBoneName)
+			if (bone.name == DealtWithBoneName)
 			{
-				_dealtWithCurveBindingsPath = curveBindingGroup.path;
+				DealtWithCurveBindingsPath = curveBindingGroup.path;
 				parentBone = bone.parent;
 			}
 		}
@@ -97,7 +100,7 @@ public class AnimationCorrector
 		string curveBindingGroupPath,
 		out GLTFAnimationChannelPath path)
 	{
-		if(curveBindingGroupPath != _dealtWithCurveBindingsPath)
+		if(curveBindingGroupPath != DealtWithCurveBindingsPath)
 		{
 			path = GLTFAnimationChannelPath.translation;
 			return null;
@@ -130,7 +133,12 @@ public class AnimationCorrector
 						Vector3 newPoint = (left + right) / 2.0f;
 						Vector3 offset = newPoint - _initialPoint;
 
-						data[i] = frameData - offset;
+						var corrFrameData = frameData - offset;
+
+						// TODO Notice what Y means, Y should be the Y direction in world space.
+						data[i] = new Vector3(DisableXZMovement ? corrFrameData.x : frameData.x,
+							DisableYMovement ? corrFrameData.y : frameData.y,
+							DisableXZMovement ? corrFrameData.z : frameData.z);
 					}
 
 					path = GLTFAnimationChannelPath.translation;
@@ -238,7 +246,7 @@ public class AnimationCorrector
 		var removeStart = path.Length;
 		while (removeStart != -1)
 		{
-			if (path == _dealtWithCurveBindingsPath)
+			if (path == DealtWithCurveBindingsPath)
 			{
 				break;
 			}
