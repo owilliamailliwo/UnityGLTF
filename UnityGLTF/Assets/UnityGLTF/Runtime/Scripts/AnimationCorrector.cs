@@ -10,6 +10,7 @@ public class AnimationCorrector
 {
 	public static string DealtWithBoneName = "root";
 
+	public static bool Enable = false;
 	public static bool DisableYMovement = false;
 	public static bool DisableXZMovement = true;
 
@@ -32,6 +33,7 @@ public class AnimationCorrector
 
 	public void Init(List<GLTFSceneExporter.CurveBindingGroup> curveBindingGroups, Transform rootNodeTransform)
 	{
+		if (!Enable) return;
 		Transform leftFootBone = null;
 		Transform rightFootBone = null;
 
@@ -100,7 +102,13 @@ public class AnimationCorrector
 		string curveBindingGroupPath,
 		out GLTFAnimationChannelPath path)
 	{
-		if(curveBindingGroupPath != _dealtWithCurveBindingsPath)
+		if (!Enable)
+		{
+			path = GLTFAnimationChannelPath.translation;
+			return null;
+		}
+
+		if (curveBindingGroupPath != _dealtWithCurveBindingsPath)
 		{
 			path = GLTFAnimationChannelPath.translation;
 			return null;
