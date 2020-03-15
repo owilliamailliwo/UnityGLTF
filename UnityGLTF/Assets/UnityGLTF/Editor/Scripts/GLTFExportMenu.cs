@@ -44,6 +44,9 @@ public class GLTFExportMenu : EditorWindow
 			var curProp = jsonReader.Value.ToString();
 			switch (curProp)
 			{
+				case "OutputPath":
+					OutputPath = jsonReader.ReadAsString();
+					break;
 				case "ExportNames":
 					GLTFSceneExporter.ExportNames = jsonReader.ReadAsBoolean().Value;
 					break;
@@ -64,9 +67,6 @@ public class GLTFExportMenu : EditorWindow
 					break;
 				case "EnableAnimationCorrector":
 					AnimationCorrector.Enable = jsonReader.ReadAsBoolean().Value;
-					break;
-				case "OutputPath":
-					OutputPath = jsonReader.ReadAsString();
 					break;
 			}
 		}
