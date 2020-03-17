@@ -518,7 +518,7 @@ namespace UnityGLTF.Extensions
 		/// Extract the joint values
 		/// </summary>
 		/// <param name="array">The array to extract from and copy</param>
-		/// <returns>Copied Vector4 with joints</returns>
+		/// <returns>Copied int array with joints</returns>
 		public static int[] ExtractJointAndCopy(BoneWeight[] array)
 		{
 			var returnArray = new int[array.Length * 4];
