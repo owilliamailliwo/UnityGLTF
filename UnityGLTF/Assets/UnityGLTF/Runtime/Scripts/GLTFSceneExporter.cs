@@ -353,7 +353,6 @@ namespace UnityGLTF
 			binFile.Close();
 #endif
 			ExportImages(path);
-
 		}
 
 		private void ExportImages(string outputPath)

@@ -140,7 +140,7 @@ public class GLTFExportMenu : EditorWindow
         EditorGUILayout.LabelField("Importer", EditorStyles.boldLabel);
         EditorGUILayout.Separator();
         EditorGUILayout.HelpBox("UnityGLTF version 0.1", MessageType.Info);
-        EditorGUILayout.HelpBox("Supported extensions: KHR_material_pbrSpecularGlossiness, ExtTextureTransform", MessageType.Info);
+        EditorGUILayout.HelpBox("Supported extensions: KHR_material_pbrSpecularGlossiness, KHR_texture_transform, KHR_mesh_quantization, KHR_materials_common, FB_materials_modmap", MessageType.Info);
     }
 
     [MenuItem("GLTF/Export Selected")]
